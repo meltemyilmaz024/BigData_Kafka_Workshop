@@ -1,0 +1,472 @@
+version: '3.5'
+networks:
+  default:
+    name: kafka-workshop
+services:
+#  ================================== zookeeper  ========================================== #
+  zookeeper-1:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper-1
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+#  ================================== Kafka ========================================== #
+  kafka-1:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka-1
+    hostname: kafka-1
+    labels:
+      com.platys.name: kafka
+    ports:
+      - 9092:9092
+      - 19092:19092
+      - 29092:29092
+      - 39092:39092
+      - 9992:9992
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_BROKER_RACK: rack1
+      KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:49092,2@kafka-2:49093,3@kafka-3:49094
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_NODE_ID: 1
+      CLUSTER_ID: y4vRIwfDT0SkZ65tD7Ey2A
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,BROKER:PLAINTEXT,LOCAL:PLAINTEXT,DOCKERHOST:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_LISTENERS: CONTROLLER://kafka-1:49092,BROKER://kafka-1:19092,LOCAL://kafka-1:39092,DOCKERHOST://kafka-1:29092,EXTERNAL://kafka-1:9092
+      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka-1:19092,LOCAL://localhost:39092,DOCKERHOST://${DOCKER_HOST_IP:-127.0.0.1}:29092,EXTERNAL://${PUBLIC_IP:-127.0.0.1}:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_MESSAGE_TIMESTAMP_TYPE: CreateTime
+      KAFKA_MIN_INSYNC_REPLICAS: 1
+      KAFKA_DELETE_TOPIC_ENABLE: 'True'
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'False'
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
+      KAFKA_JMX_PORT: 9992
+      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9992
+      KAFKA_JMX_HOSTNAME: ${PUBLIC_IP:-127.0.0.1}
+      KAFKA_LOG4J_ROOT_LOGLEVEL: INFO
+      KAFKA_TOOLS_LOG4J_LOGLEVEL: INFO
+    volumes:
+      - ./data-transfer:/data-transfer
+    restart: unless-stopped
+  kafka-2:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka-2
+    hostname: kafka-2
+    labels:
+      com.platys.name: kafka
+    ports:
+      - 9093:9093
+      - 19093:19093
+      - 29093:29093
+      - 39093:39093
+      - 9993:9993
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_BROKER_RACK: rack1
+      KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:49092,2@kafka-2:49093,3@kafka-3:49094
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_NODE_ID: 2
+      CLUSTER_ID: y4vRIwfDT0SkZ65tD7Ey2A
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,BROKER:PLAINTEXT,LOCAL:PLAINTEXT,DOCKERHOST:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_LISTENERS: CONTROLLER://kafka-2:49093,BROKER://kafka-2:19093,LOCAL://kafka-2:39093,DOCKERHOST://kafka-2:29093,EXTERNAL://kafka-2:9093
+      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka-2:19093,LOCAL://localhost:39093,DOCKERHOST://${DOCKER_HOST_IP:-127.0.0.1}:29093,EXTERNAL://${PUBLIC_IP:-127.0.0.1}:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_MESSAGE_TIMESTAMP_TYPE: CreateTime
+      KAFKA_MIN_INSYNC_REPLICAS: 1
+      KAFKA_DELETE_TOPIC_ENABLE: 'True'
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'False'
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
+      KAFKA_JMX_PORT: 9993
+      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9993
+      KAFKA_JMX_HOSTNAME: ${PUBLIC_IP:-127.0.0.1}
+      KAFKA_LOG4J_ROOT_LOGLEVEL: INFO
+      KAFKA_TOOLS_LOG4J_LOGLEVEL: INFO
+    volumes:
+      - ./data-transfer:/data-transfer
+    restart: unless-stopped
+  kafka-3:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka-3
+    hostname: kafka-3
+    labels:
+      com.platys.name: kafka
+    ports:
+      - 9094:9094
+      - 19094:19094
+      - 29094:29094
+      - 39094:39094
+      - 9994:9994
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_BROKER_RACK: rack1
+      KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:49092,2@kafka-2:49093,3@kafka-3:49094
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_NODE_ID: 3
+      CLUSTER_ID: y4vRIwfDT0SkZ65tD7Ey2A
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,BROKER:PLAINTEXT,LOCAL:PLAINTEXT,DOCKERHOST:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_LISTENERS: CONTROLLER://kafka-3:49094,BROKER://kafka-3:19094,LOCAL://kafka-3:39094,DOCKERHOST://kafka-3:29094,EXTERNAL://kafka-3:9094
+      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka-3:19094,LOCAL://localhost:39094,DOCKERHOST://${DOCKER_HOST_IP:-127.0.0.1}:29094,EXTERNAL://${PUBLIC_IP:-127.0.0.1}:9094
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_MESSAGE_TIMESTAMP_TYPE: CreateTime
+      KAFKA_MIN_INSYNC_REPLICAS: 1
+      KAFKA_DELETE_TOPIC_ENABLE: 'True'
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'False'
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
+      KAFKA_JMX_PORT: 9994
+      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9994
+      KAFKA_JMX_HOSTNAME: ${PUBLIC_IP:-127.0.0.1}
+      KAFKA_LOG4J_ROOT_LOGLEVEL: INFO
+      KAFKA_TOOLS_LOG4J_LOGLEVEL: INFO
+    volumes:
+      - ./data-transfer:/data-transfer
+    restart: unless-stopped
+  #  ================================== Kafka Connect ========================================== #
+  kafka-connect-1:
+    image: confluentinc/cp-kafka-connect:7.5.0
+    container_name: kafka-connect-1
+    hostname: kafka-connect-1
+    labels:
+      com.platys.name: kafka-connect
+      com.platys.restapi.title: Kafka Connect REST API
+      com.platys.restapi.url: http://dataplatform:8083
+    ports:
+      - 8083:8083
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: kafka-1:19092,kafka-2:19093,kafka-3:19094
+      CONNECT_LISTENERS: http://0.0.0.0:8083
+      CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect-1
+      CONNECT_REST_ADVERTISED_PORT: 8083
+      CONNECT_GROUP_ID: kafka-connect-cluster
+      CONNECT_CONFIG_STORAGE_TOPIC: _connect-configs
+      CONNECT_OFFSET_STORAGE_TOPIC: _connect-offsets
+      CONNECT_STATUS_STORAGE_TOPIC: _connect-status
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 3
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 3
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 3
+      CONNECT_OFFSET_FLUSH_INTERVAL_MS: 10000
+      CONNECT_ACCESS_CONTROL_ALLOW_ORIGIN: '*'
+      CONNECT_ACCESS_CONTROL_ALLOW_METHODS: GET,POST,PUT,DELETE
+      CONNECT_ACCESS_CONTROL_ALLOW_HEADERS: origin,content-type,accept,authorization
+      CONNECT_KEY_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry-1:8081
+      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry-1:8081
+      CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_LOG4J_ROOT_LOGLEVEL: INFO
+      CONNECT_LOG4J_LOGGERS: org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR
+      CONNECT_LOG4J_APPENDER_STDOUT_LAYOUT_CONVERSIONPATTERN: '[%d] %p %X{connector.context}%m (%c:%L)%n'
+      CONNECT_PLUGIN_PATH: /usr/share/java,/etc/kafka-connect/addl-plugins,/etc/kafka-connect/cflthub-plugins
+      CONNECT_CONNECTOR_CLIENT_CONFIG_OVERRIDE_POLICY: All
+      #CLASSPATH: /usr/share/java/monitoring-interceptors/monitoring-interceptors-4.0.0.jar
+      AWS_ACCESS_KEY_ID: V42FCGRVMK24JJ8DHUYG
+      AWS_SECRET_ACCESS_KEY: bKhWxVF3kQoLY9kFmt91l+tDrEoZjqnWXzY9Eza
+      # External secrets config
+      # See https://docs.confluent.io/current/connect/security.html#externalizing-secrets
+      CONNECT_CONFIG_PROVIDERS: file
+      CONNECT_CONFIG_PROVIDERS_FILE_CLASS: org.apache.kafka.common.config.provider.FileConfigProvider
+    volumes:
+      - ./data-transfer:/data-transfer
+      - ./plugins/kafka-connect/connectors:/etc/kafka-connect/addl-plugins
+      - ./plugins/kafka-connect/jars:/etc/kafka-connect/jars
+      - ./plugins/opentelemetry/agents:/otel
+    command:
+      # In the command section, $ are replaced with $$ to avoid the error 'Invalid interpolation format for "command" option'
+      - bash
+      - -c
+      - |
+        echo "Installing Connectors"
+        mkdir -p /etc/kafka-connect/cflthub-plugins
+        for i in $$(echo "confluentinc/kafka-connect-jdbc:10.0.0,confluentinc/kafka-connect-mqtt:1.3.0,debezium/debezium-connector-postgresql:1.9.2" | sed "s/,/ /g")
+        do
+          confluent-hub install --no-prompt --component-dir /etc/kafka-connect/cflthub-plugins --verbose "$$i"
+        done
+        #
+        echo "Launching Kafka Connect worker"
+        /etc/confluent/docker/run &
+        #
+        sleep infinity
+    restart: unless-stopped
+  #  ================================== ksqlDB ========================================== #
+  ksqldb-server-1:
+    image: confluentinc/ksqldb-server:0.29.0
+    hostname: ksqldb-server-1
+    container_name: ksqldb-server-1
+    labels:
+      com.platys.name: ksqldb
+      com.platys.restapi.title: ksqlDB Server REST API
+      com.platys.restapi.url: http://dataplatform:8088
+    ports:
+      - 8088:8088
+      - 1095:1095
+      - 1096:1096
+    environment:
+      KSQL_LOG4J_OPTS: -Dlog4j.configuration=file:/tmp/log4j.properties
+      KSQL_LOG4J_LOGGERS: org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR
+      KSQL_LOG4J_PROCESSING_LOG_TOPIC: ksql_processing_log
+      KSQL_LOG4J_PROCESSING_LOG_BROKERLIST: kafka-1:19092,kafka-2:19093,kafka-3:19094
+      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_NAME: ksql_processing_log
+      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_REPLICATION_FACTOR: 1
+      KSQL_KSQL_LOGGING_PROCESSING_ROWS_INCLUDE: 'true'
+      KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: 'true'
+      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: 'true'
+      # For Demo purposes: improve resource utilization and avoid timeouts
+      KSQL_KSQL_STREAMS_NUM_STREAM_THREADS: 1
+      KSQL_PRODUCER_ENABLE_IDEMPOTENCE: 'true'
+      KSQL_KSQL_PERSISTENCE_DEFAULT_FORMAT_KEY: KAFKA
+      KSQL_APPLICATION_ID: ksqldb-cluster
+      KSQL_KSQL_SERVICE_ID: ksqldb-cluster
+      KSQL_HOST_NAME: ksqldb-server-1
+      KSQL_LISTENERS: http://0.0.0.0:8088
+      KSQL_BOOTSTRAP_SERVERS: kafka-1:19092,kafka-2:19093,kafka-3:19094
+      KSQL_CACHE_MAX_BYTES_BUFFERING: 0
+      KSQL_RESPONSE_HTTP_HEADERS_CONFIG: ''
+      KSQL_SECURITY_PROTOCOL: PLAINTEXT
+      KSQL_KSQL_CONNECT_URL: http://kafka-connect-1:8083
+      KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry-1:8081
+      KSQL_KSQL_INTERNAL_TOPIC_REPLICAS: 1
+      KSQL_KSQL_SINK_REPLICAS: 1
+      KSQL_KSQL_STREAMS_REPLICATION_FACTOR: 1
+      KSQL_KSQL_QUERY_PULL_METRICS_ENABLED: 'true'
+      KSQL_KSQL_HIDDEN_TOPICS: ^_.*,default_ksql_processing_log
+      KSQL_KSQL_SUPPRESS_ENABLED: 'True'
+      KSQL_KSQL_SUPPRESS_BUFFER_SIZE_BYTES: '-1'
+      KSQL_KSQL_QUERY_PULL_TABLE_SCAN_ENABLED: 'False'
+      KSQL_CONFIG_DIR: /etc/ksqldb
+      KSQL_KSQL_EXTENSION_DIR: /etc/ksqldb/ext/      
+    volumes:
+      - ./data-transfer:/data-transfer
+      - ./plugins/ksqldb:/etc/ksqldb/ext
+      - ./conf/ksqldb/etc/log4j.properties:/tmp/log4j.properties.templ
+      - ./plugins/kafka-connect/connectors:/etc/kafka-connect/addl-plugins
+      - ./plugins/kafka-connect/jars:/etc/kafka-connect/jars
+      - ./plugins/opentelemetry/agents:/otel
+    command:
+      # In the command section, $ are replaced with $$ to avoid the error 'Invalid interpolation format for "command" option'
+      - bash
+      - -c
+      - |
+        python -c 'import os,sys; sys.stdout.write(os.path.expandvars(sys.stdin.read()))' < /tmp/log4j.properties.templ > /tmp/log4j.properties
+        #
+        echo "Launching ksqlDB server"
+        #/etc/confluent/docker/run &
+        /usr/bin/docker/run &
+        #
+        sleep infinity
+    restart: unless-stopped
+
+  #  ================================== Confluent REST Proxy ========================================== #
+  kafka-rest-1:
+    image: confluentinc/cp-kafka-rest:7.5.0
+    container_name: kafka-rest-1
+    hostname: kafka-rest-1
+    labels:
+      com.platys.name: kafka-rest
+      com.platys.restapi.title: Kafka REST Proxy
+      com.platys.restapi.url: http://dataplatform:18086
+    ports:
+      - 18086:8086
+    environment:
+      KAFKA_REST_BOOTSTRAP_SERVERS: kafka-1:19092,kafka-2:19093,kafka-3:19094
+      KAFKA_REST_LISTENERS: http://0.0.0.0:8086
+      KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry-1:8081
+      KAFKA_REST_HOST_NAME: kafka-rest-1
+      KAFKA_REST_ACCESS_CONTROL_ALLOW_ORIGIN: '*'
+      KAFKA_REST_ACCESS_CONTROL_ALLOW_METHODS: GET,POST,PUT,DELETE
+      KAFKA_REST_ACCESS_CONTROL_ALLOW_HEADERS: origin,content-type,accept,authorization
+    volumes:
+      - ./data-transfer:/data-transfer
+    restart: unless-stopped
+
+  #  ================================== kafka topics ui  ========================================== #
+  
+  # https://github.com/Landoop/kafka-topics-ui
+  kafka-topics-ui:
+    image: landoop/kafka-topics-ui:0.9.4
+    container_name: kafka-topics-ui
+    environment:
+      KAFKA_REST_PROXY_URL: http://0.0.0.0:8086
+      PROXY: "TRUE"
+    ports:
+      - 28109:8000
+    depends_on:
+      - kafka-rest-1
+    restart: always
+  
+  #  ================================== kcat (used to be kafkacat)  ========================================== #
+  kcat:
+    image: edenhill/kcat:1.7.1
+    container_name: kcat
+    hostname: kcat
+    labels:
+      com.platys.name: kcat
+    volumes:
+      - ./data-transfer:/data-transfer
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        while [ 1 -eq 1 ];do sleep 60;done
+    restart: unless-stopped
+
+  #  ================================== Kafka Connect UI ========================================== #
+  kafka-connect-ui:
+    image: landoop/kafka-connect-ui:latest
+    container_name: kafka-connect-ui
+    hostname: kafka-connect-ui
+    labels:
+      com.platys.name: kafka-connect-ui
+      com.platys.webui.title: Kafka Connect UI
+      com.platys.webui.url: http://dataplatform:28103
+    ports:
+      - 28103:8000
+    environment:
+      CONNECT_URL: http://kafka-connect-1:8083,http://kafka-connect-2:8084
+      PROXY: 'true'
+    volumes:
+      - ./data-transfer:/data-transfer
+      - ./conf/resolv.conf:/etc/resolv.conf:ro
+    restart: unless-stopped
+ 
+  #  ================================== Apache Kafka HQ (AKHQ) ========================================== #
+  akhq:
+    image: tchiotludo/akhq:latest
+    container_name: akhq
+    hostname: akhq
+    labels:
+      com.platys.name: akhq
+      com.platys.webui.title: AKHQ UI
+      com.platys.webui.url: http://dataplatform:28107
+      com.platys.restapi.title: AKHQ API
+      com.platys.restapi.url: http://dataplatform:28107/api
+    ports:
+      - 28107:8080
+      - 28320:28081
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          pagination.page-size: 25
+          topic-data:
+            size: 50
+            poll-timeout: 1000
+            kafka-max-message-length: 1000000
+          ui-options:
+            topic:
+              default-view: HIDE_INTERNAL
+              skip-consumer-groups: false
+              skip-last-record: true
+              show-all-consumer-groups: true
+            topic-data:
+              sort: OLDEST
+          connections:
+            docker-kafka-server:
+              properties:
+                bootstrap.servers: 'kafka-1:19092,kafka-2:19093,kafka-3:19094'
+              schema-registry:
+                url: "http://schema-registry-1:8081"
+                type: "confluent"
+              connect:
+                - name: "connect-1"
+                  url: "http://kafka-connect-1:8083"
+              ksqldb:
+                - name: "ksqldb"
+                  url: "http://ksqldb-server-1:8088"
+    volumes:
+      - ./data-transfer:/data-transfer
+    restart: unless-stopped
+  #  ================================== Conduktor Platform ========================================== #
+  conduktor-platform:
+    image: conduktor/conduktor-platform:latest
+    container_name: conduktor-platform
+    hostname: conduktor-platform
+    labels:
+      com.platys.name: conduktor-platform
+      com.platys.webui.title: Conduktor Platform UI
+      com.platys.webui.url: http://dataplatform:28285
+    ports:
+      - 28285:8080
+    environment:
+      - RUN_MODE=nano
+      - CDK_LISTENING_PORT=8080
+      - CONSOLE_ENABLED=true
+      - TESTING_ENABLED=true
+      - MONITORING_ENABLED=true
+      - DATA_MASKING_ENABLED=false
+      - SCANNER_ENABLED=false
+      - GOVERNANCE_ENABLED=false
+      - CDK_IN_CONF_FILE=/etc/platform-config.yaml
+      - KAFKA_BOOTSTRAP_SERVER=kafka-1:19092,kafka-2:19093,kafka-3:19094
+      - LICENSE_KEY=
+      - ORGANISATION_NAME=default
+      - ADMIN_EMAIL=admin
+      - ADMIN_PSW=abc123!
+      - SCHEMA_REGISTRY_URL=http://schema-registry-1:8081
+      - KAFKA_CONNECT_URL=http://kafka-connect-1:8083
+    volumes:
+      - ./data-transfer:/data-transfer
+      - ./conf/conduktor-platform/platform-config.yaml:/etc/platform-config.yaml
+    restart: unless-stopped
+
+ 
+  #  ================================== PostgreSQL ========================================== #
+  postgresql:
+    image: postgres:15
+    container_name: postgresql
+    hostname: postgresql
+    labels:
+      com.platys.name: postgresql
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=abc123!
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_MULTIPLE_DATABASES=demodb
+      - POSTGRES_MULTIPLE_USERS=demo
+      - POSTGRES_MULTIPLE_PASSWORDS=abc123!
+      - POSTGRES_MULTIPLE_ADDL_ROLES=
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - DB_SCHEMA=demo
+    volumes:
+      - ./data-transfer:/data-transfer
+      - ./init/postgresql:/docker-entrypoint-initdb.d/
+    restart: unless-stopped
+ #  ================================== Jupyter ========================================== #
+  jupyter:
+    image: jupyter/minimal-notebook:latest
+    container_name: jupyter
+    hostname: jupyter
+    labels:
+      com.platys.name: jupyter
+      com.platys.webui.title: Jupyter UI
+      com.platys.webui.url: http://dataplatform:28888
+    ports:
+      - 28888:8888
+      - 14040-14044:4040-4044
+    user: root
+    environment:
+      JUPYTER_ENABLE_LAB: "'yes'"
+      GRANT_SUDO: "'yes'"
+      DOCKER_STACKS_JUPYTER_CMD: lab      
+    volumes:
+      - ./data-transfer:/data-transfer
+    command:
+      # In the command section, $ are replaced with $$ to avoid the error 'Invalid interpolation format for "command" option'
+      - bash
+      - -c
+      - |
+        start-notebook.sh
+    restart: unless-stopped
